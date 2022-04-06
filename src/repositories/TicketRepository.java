@@ -1,7 +1,10 @@
 package repositories;
 
 import com.mongodb.client.MongoCollection;
-import entities.*;
+import entities.Decor;
+import entities.Flower;
+import entities.Ticket;
+import entities.Tree;
 import org.bson.Document;
 
 import java.time.LocalDate;
@@ -87,68 +90,65 @@ public class TicketRepository {
         query = queryToMongo();
         List<Ticket> allTickets = new ArrayList<>();
         query.forEach(document -> {
+            List<Document> products = null;
             Ticket ticket = new Ticket();
+
             ticket.setNumTicket(document.getInteger("_id"));
             ticket.setDate(document.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             ticket.setTotal(document.getDouble("total"));
-            List<Document> products = document.get("products", ArrayList.class);
+            products = document.getList("products", Document.class);
+
             for(Document doc : products){
-                if(treeRepository.getTreesMongo().find(new Document("name", doc.getString("name"))).first() != null){
-                    ticket.getProducts().add((Tree) doc.get(Tree.class));
-                } else if(flowerRepository.getFlowersMongo().find(new Document("name", doc.getString("name"))).first() != null){
-                    ticket.getProducts().add((Flower) doc.get(Product.class));
-                } else if(decorRepository.getDecorMongo().find(new Document("name", doc.getString("name"))).first() != null){
-                    ticket.getProducts().add((Decor) doc.get(Product.class));
+                if(doc.getString("size") != null){
+                    Tree tree = new Tree(doc.getString("name"), doc.getDouble("price"), doc.getInteger("quantity"));
+                    tree.setSizeString(doc.getString("size"));
+                    ticket.getProducts().add(tree);
+                } else if(doc.getString("color") != null){
+                    Flower flower = new Flower(doc.getString("name"), doc.getString("color"), doc.getDouble("price"),
+                            doc.getInteger("quantity"));
+                    ticket.getProducts().add(flower);
+                } else if(doc.getString("material") != null){
+                    Decor decor = new Decor(doc.getString("name"), doc.getDouble("price"),doc.getInteger("quantity"));
+                    decor.setTypeOfMaterial(doc.getString("material"));
+                    ticket.getProducts().add(decor);
                 }
             }
+
             allTickets.add(ticket);
         });
         return allTickets;
 
     }
 
-    public List<Ticket> getOldSales(LocalDate date1) {
-
+    public List<Ticket> getOldSales(LocalDate date) {
         List<Ticket> oldTickets = new ArrayList<>();
 
         for (int i = 0; i < findAll().size(); i++) {
-
-            if (findOne(i).getDate().compareTo(date1) <= 0) {
-
+            if (findOne(i).getDate().compareTo(date) <= 0) {
                 oldTickets.add(findOne(i));
-
             }
         }
-
         return oldTickets;
     }
 
     public List<Ticket> getOldSales(LocalDate date1, LocalDate date2){
-
         List<Ticket> oldTickets = new ArrayList<>();
 
         for (int i = 0; i < findAll().size(); i++){
-
             if(findOne(i).getDate().compareTo(date2) < 0 && findOne(i).getDate().compareTo(date1) > 0 ){
-
                 oldTickets.add(findOne(i));
-
             }
         }
-
         return oldTickets;
     }
 
     public List<Double> getTotalPricesFromDatabase(){
-
         List<Double> totalSalesList = new ArrayList<>();
 
         for(int i = 0; i < findAll().size(); i++){
             totalSalesList.add(findAll().get(i).getTotal());
-
         }
         return totalSalesList;
-
     }
 
 }

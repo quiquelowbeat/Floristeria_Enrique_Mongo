@@ -19,7 +19,7 @@ public class TreeRepository {
         this.treesMongo = db.getCollection("trees");
     }
 
-    public List<Document> sentQueryToMongo(){
+    public List<Document> sentQueryToMongo() {
         return treesMongo.find().into(new ArrayList<>());
     }
 
@@ -52,23 +52,23 @@ public class TreeRepository {
         return treesMongo;
     }
 
-    public int removeTree(String name, String size, int quantity){
+    public int removeTree(String name, String size, int quantity) {
         query = sentQueryToMongo();
         boolean exist = false;
         int option = 0;
         int i = 0;
 
-        while(!exist && i < query.size()){
-            if(name.equalsIgnoreCase(query.get(i).getString("name")) &&
-                    size.equalsIgnoreCase(query.get(i).getString("size"))){
+        while (!exist && i < query.size()) {
+            if (name.equalsIgnoreCase(query.get(i).getString("name")) &&
+                    size.equalsIgnoreCase(query.get(i).getString("size"))) {
                 exist = true;
-                if(query.get(i).getInteger("quantity") >= quantity){
+                if (query.get(i).getInteger("quantity") >= quantity) {
                     int newQuantity = query.get(i).getInteger("quantity") - quantity;
                     Document newDocument = new Document("quantity", newQuantity);
                     Document updateObject = new Document("$set", newDocument);
                     treesMongo.updateOne(query.get(i), updateObject);
                     option = 1;
-                } else if(query.get(i).getInteger("quantity") < quantity){
+                } else if (query.get(i).getInteger("quantity") < quantity) {
                     option = 2;
                 }
             }
@@ -77,16 +77,16 @@ public class TreeRepository {
         return option;
     }
 
-    public int getTreeStockQuantity(){
+    public int getTreeStockQuantity() {
         query = sentQueryToMongo();
         int quantity = 0;
-        for(Document doc: query){
+        for (Document doc : query) {
             quantity += doc.getInteger("quantity");
         }
         return quantity;
     }
 
-    public List<Product> getTreesFromDatabase(){
+    public List<Product> getTreesFromDatabase() {
         query = sentQueryToMongo();
         List<Product> trees = new ArrayList<>();
         query.forEach(document -> {
@@ -98,27 +98,29 @@ public class TreeRepository {
         return trees;
     }
 
-    public List<Document> getArrayTrees(){
+    public List<Document> getArrayTrees() {
         return sentQueryToMongo();
     }
-    public int getTreeQuantity(int i){
+
+    public int getTreeQuantity(int i) {
         query = sentQueryToMongo();
         return query.get(i).getInteger("quantity");
     }
-    public double getTreePrice(int i){
+
+    public double getTreePrice(int i) {
         query = sentQueryToMongo();
         return query.get(i).getDouble("price");
     }
 
-    public Document findByNameAndSize(String name, String size){
+    public Document findByNameAndSize(String name, String size) {
         query = sentQueryToMongo();
         Document document = null;
         boolean exist = false;
         int i = 0;
 
-        while(!exist && i < query.size()){
-            if(name.equalsIgnoreCase(query.get(i).getString("name")) &&
-                    size.equalsIgnoreCase(query.get(i).getString("size"))){
+        while (!exist && i < query.size()) {
+            if (name.equalsIgnoreCase(query.get(i).getString("name")) &&
+                    size.equalsIgnoreCase(query.get(i).getString("size"))) {
                 exist = true;
                 document = query.get(i);
             }
@@ -126,8 +128,8 @@ public class TreeRepository {
         }
         return document;
     }
-
-
+}
+/*
     public Document findOne(String name) {
         Document queryName = treesMongo.find(new Document("name", name)).first();
         Document document = null;
@@ -144,8 +146,7 @@ public class TreeRepository {
         return document;
 
     }
-
-}
+*/
 
 
 /*

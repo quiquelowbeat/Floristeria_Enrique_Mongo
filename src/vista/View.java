@@ -53,7 +53,7 @@ public class View {
 
     public static void showInfoTicket(Ticket ticket) {
 
-        System.out.println("TICKET NUMBER: " + ticket.getNumTicket() +
+        System.out.println("\nTICKET NUMBER: " + ticket.getNumTicket() +
                             "\nDATE: " + ticket.getDate() + "\nPRODUCTS:");
 
         for (Product product : ticket.getProducts()) {
@@ -77,7 +77,7 @@ public class View {
 
     public static void showOldTickets(List<Ticket> oldTickets) {
         if(!oldTickets.isEmpty()){
-            oldTickets.forEach(x -> showInfoTicket(x));
+            oldTickets.forEach(View::showInfoTicket);
         } else {
             System.out.println("NO OLD TICKETS TO SHOW.");
         }
