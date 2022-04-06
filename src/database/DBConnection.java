@@ -12,11 +12,10 @@ public class DBConnection {
 
     private DBConnection() {}
 
-    public static DBConnection getInstance(){
+    public static void getInstance(){
         if(instance == null){
             instance = new DBConnection();
         }
-        return instance;
     }
 
 }

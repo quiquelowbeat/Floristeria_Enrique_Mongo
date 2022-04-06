@@ -23,7 +23,7 @@ public class App {
     public static void main(String[] args) {
 
         Logger.getLogger(Loggers.PREFIX).setLevel(Level.WARNING); // Oculta los mensajes de logging de MongoDB.
-        DBConnection dbConnection = DBConnection.getInstance();
+        DBConnection.getInstance();
 
         Florist florist = new Florist("Margarita", "C/ Peru 254", "698574526");
 
