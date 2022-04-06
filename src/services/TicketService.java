@@ -22,38 +22,50 @@ public class TicketService {
         this.decorRepository = decorRepository;
     }
 
-    public boolean addProductTree(Ticket ticket, String name, String size, int quantity) {
-        boolean result = false;
+    public int addProductTree(Ticket ticket, String name, String size, int quantity) {
+        int result = 0;
         Document treeDoc = treeRepository.findByNameAndSize(name, size);
         if (treeDoc != null) {
-            Tree tree = new Tree(treeDoc.getString("name"), treeDoc.getDouble("price"), quantity);
-            tree.setSizeString(treeDoc.getString("size"));
-            ticket.getProducts().add(tree);
-            treeRepository.removeTree(name, size, quantity);
-            result = true;
+            if((treeDoc.getInteger("quantity") >= quantity)){
+                Tree tree = new Tree(treeDoc.getString("name"), treeDoc.getDouble("price"), quantity);
+                tree.setSizeString(treeDoc.getString("size"));
+                ticket.getProducts().add(tree);
+                treeRepository.removeTree(name, size, quantity);
+                result = 1;
+            } else {
+                result = 2;
+            }
         }
         return result;
     }
-    public boolean addProductFlower(Ticket ticket, String name, String color, int quantity) {
-        boolean result = false;
+    public int addProductFlower(Ticket ticket, String name, String color, int quantity) {
+        int result = 0;
         Document flowerDoc = flowerRepository.findByNameAndColor(name, color);
         if (flowerDoc != null) {
-            Flower flower = new Flower(flowerDoc.getString("name"), flowerDoc.getString("color"), flowerDoc.getDouble("price"), quantity);
-            ticket.getProducts().add(flower);
-            flowerRepository.removeFlower(name, color, quantity);
-            result = true;
+            if(flowerDoc.getInteger("quantity") >= quantity){
+                Flower flower = new Flower(flowerDoc.getString("name"), flowerDoc.getString("color"), flowerDoc.getDouble("price"), quantity);
+                ticket.getProducts().add(flower);
+                flowerRepository.removeFlower(name, color, quantity);
+                result = 1;
+            } else {
+                result = 2;
+            }
         }
         return result;
     }
-    public boolean addProductDecor(Ticket ticket, String name, String material, int quantity) {
-        boolean result = false;
+    public int addProductDecor(Ticket ticket, String name, String material, int quantity) {
+        int result = 0;
         Document decorDoc = decorRepository.findByNameAndMaterial(name, material);
         if (decorDoc != null) {
-            Decor decor = new Decor(decorDoc.getString("name"), decorDoc.getDouble("price"), quantity);
-            decor.setTypeOfMaterial(decorDoc.getString("material"));
-            ticket.getProducts().add(decor);
-            flowerRepository.removeFlower(name, material, quantity);
-            result = true;
+            if(decorDoc.getInteger("quantity") >= quantity){
+                Decor decor = new Decor(decorDoc.getString("name"), decorDoc.getDouble("price"), quantity);
+                decor.setTypeOfMaterial(decorDoc.getString("material"));
+                ticket.getProducts().add(decor);
+                flowerRepository.removeFlower(name, material, quantity);
+                result = 1;
+            } else {
+                result = 2;
+            }
         }
         return result;
     }

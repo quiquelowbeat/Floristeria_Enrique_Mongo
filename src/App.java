@@ -90,15 +90,18 @@ public class App {
                         break;
 
                     case 5:
-                        View.showRemoveMessageConfirmation(treeRepository.removeTree(Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
+                        View.showMessageConfirmation(treeRepository.removeTree(Keyboard.readString("ENTER NAME"),
+                                Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
                         break;
 
                     case 6:
-                        View.showRemoveMessageConfirmation(flowerRepository.removeFlower(Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER COLOR"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
+                        View.showMessageConfirmation(flowerRepository.removeFlower(Keyboard.readString("ENTER NAME"),
+                                Keyboard.readString("ENTER COLOR"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
                         break;
 
                     case 7:
-                        View.showRemoveMessageConfirmation(decorRepository.removeDecor(Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
+                        View.showMessageConfirmation(decorRepository.removeDecor(Keyboard.readString("ENTER NAME"),
+                                Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY TO REMOVE")));
                         break;
 
                     case 8:
@@ -120,28 +123,26 @@ public class App {
                                                         3-ADD DECOR
                                                         0-EXIT
                                                         """);
-                            switch(x){
-                                case "1":
-                                    View.productAdded(ticketService.addProductTree(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY")));
-                                    break;
-                                case "2":
-                                    View.productAdded(ticketService.addProductFlower(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER COLOR"), Keyboard.readInt("ENTER QUANTITY")));
-                                    break;
-                                case "3":
-                                    View.productAdded(ticketService.addProductDecor(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY")));
-                                    break;
+                            switch (x) {
+                                case "1" -> View.productAdded(ticketService.addProductTree(ticket, Keyboard.readString("ENTER NAME"),
+                                        Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY")));
+                                case "2" -> View.productAdded(ticketService.addProductFlower(ticket, Keyboard.readString("ENTER NAME"),
+                                        Keyboard.readString("ENTER COLOR"), Keyboard.readInt("ENTER QUANTITY")));
+                                case "3" -> View.productAdded(ticketService.addProductDecor(ticket, Keyboard.readString("ENTER NAME"),
+                                        Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY")));
                             }
                         }while (!x.equalsIgnoreCase("0"));
                         if (!ticket.getProducts().isEmpty()){
                             ticketService.total(ticket);
                             View.ticketAdded(ticketRepository.addTicket(ticket));
                         }else {
-                            View.showMessage("TICKET NOT ADDED, PRODUCT LIST EMPTY");
+                            View.showMessage("TICKET NOT ADDED, PRODUCT LIST EMPTY.");
                         }
                         break;
 
                     case 11:
-                        LocalDate date = LocalDate.of(Keyboard.readInt("Year YYYY"), Keyboard.readInt("MONTH MM"), Keyboard.readInt("DAY DD"));
+                        LocalDate date = LocalDate.of(Keyboard.readInt("Year YYYY"), Keyboard.readInt("MONTH MM"),
+                                Keyboard.readInt("DAY DD"));
                         View.showOldTickets(ticketRepository.getOldSales(date));
                         break;
 

@@ -85,7 +85,7 @@ public class View {
 
     }
 
-    public static void showRemoveMessageConfirmation(int option) {
+    public static void showMessageConfirmation(int option) {
         if(option == 0){
             System.out.println("PRODUCT NOT FOUND.");
         } else if(option == 1) {
@@ -143,11 +143,13 @@ public class View {
         }
     }
 
-    public static void productAdded ( boolean result){
-        if (result) {
-            System.out.println("PRODUCT SUCCESSFULLY ADDED.");
-        } else {
+    public static void productAdded ( int result){
+        if (result == 0) {
             System.out.println("PRODUCT NOT FOUND.");
+        } else if(result == 1) {
+            System.out.println("PRODUCT SUCCESSFULLY ADDED.");
+        } else if(result == 2){
+            System.out.println("QUANTITY EXCEEDS THE AVAILABLE STOCK.");
         }
     }
 
