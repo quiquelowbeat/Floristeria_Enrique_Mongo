@@ -48,6 +48,10 @@ public class FlowerRepository {
         return true;
     }
 
+    public MongoCollection<Document> getFlowersMongo() {
+        return flowersMongo;
+    }
+
     public int removeFlower(String name, String color, int quantity){
         query = sentQueryToMongo();
         boolean exist = false;

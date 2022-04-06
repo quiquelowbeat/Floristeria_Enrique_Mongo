@@ -48,6 +48,10 @@ public class DecorRepository {
         return true;
     }
 
+    public MongoCollection<Document> getDecorMongo() {
+        return decorMongo;
+    }
+
     public int removeDecor(String name, String material, int quantity){
         query = sentQueryToMongo();
         boolean exist = false;
@@ -74,6 +78,23 @@ public class DecorRepository {
         return option;
     }
 
+    public Document findByNameAndMaterial(String name, String material){
+        query = sentQueryToMongo();
+        Document document = null;
+        boolean exist = false;
+        int i = 0;
+
+        while(!exist && i < query.size()){
+            if(name.equalsIgnoreCase(query.get(i).getString("name")) &&
+                    material.equalsIgnoreCase(query.get(i).getString("material"))){
+                exist = true;
+                document = query.get(i);
+            }
+            i++;
+        }
+        return document;
+    }
+
     public int getDecorStockQuantity(){
         query = sentQueryToMongo();
         int quantity = 0;
@@ -82,6 +103,7 @@ public class DecorRepository {
         }
         return quantity;
     }
+
 
     public List<Product> getDecorFromDatabase(){
         query = sentQueryToMongo();

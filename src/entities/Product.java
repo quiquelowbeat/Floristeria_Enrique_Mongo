@@ -1,9 +1,8 @@
 package entities;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Product implements Serializable {
+public abstract class Product {
 
     static int nextId = 1;
 

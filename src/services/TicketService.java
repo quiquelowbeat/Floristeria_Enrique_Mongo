@@ -1,7 +1,7 @@
 package services;
 
-import entities.Product;
-import entities.Ticket;
+import entities.*;
+import org.bson.Document;
 import repositories.DecorRepository;
 import repositories.FlowerRepository;
 import repositories.TicketRepository;
@@ -22,23 +22,37 @@ public class TicketService {
         this.decorRepository = decorRepository;
     }
 
-    public boolean addProduct(Ticket ticket, String name) {
-
+    public boolean addProductTree(Ticket ticket, String name, String size, int quantity) {
         boolean result = false;
-        Product tree = treeRepository.findOne(name);
-        Product flower = flowerRepository.findOne(name);
-        Product decor = decorRepository.findOne(name);
-        if(tree != null ){
+        Document treeDoc = treeRepository.findByNameAndSize(name, size);
+        if (treeDoc != null) {
+            Tree tree = new Tree(treeDoc.getString("name"), treeDoc.getDouble("price"), quantity);
+            tree.setSizeString(treeDoc.getString("size"));
             ticket.getProducts().add(tree);
-            treeRepository.removeTree(name);
+            treeRepository.removeTree(name, size, quantity);
             result = true;
-        }else if(flower != null){
+        }
+        return result;
+    }
+    public boolean addProductFlower(Ticket ticket, String name, String color, int quantity) {
+        boolean result = false;
+        Document flowerDoc = flowerRepository.findByNameAndColor(name, color);
+        if (flowerDoc != null) {
+            Flower flower = new Flower(flowerDoc.getString("name"), flowerDoc.getString("color"), flowerDoc.getDouble("price"), quantity);
             ticket.getProducts().add(flower);
-            flowerRepository.removeFlower(name);
+            flowerRepository.removeFlower(name, color, quantity);
             result = true;
-        }else if(decor != null){
+        }
+        return result;
+    }
+    public boolean addProductDecor(Ticket ticket, String name, String material, int quantity) {
+        boolean result = false;
+        Document decorDoc = decorRepository.findByNameAndMaterial(name, material);
+        if (decorDoc != null) {
+            Decor decor = new Decor(decorDoc.getString("name"), decorDoc.getDouble("price"), quantity);
+            decor.setTypeOfMaterial(decorDoc.getString("material"));
             ticket.getProducts().add(decor);
-            decorRepository.removeDecor(name);
+            flowerRepository.removeFlower(name, material, quantity);
             result = true;
         }
         return result;
@@ -50,7 +64,7 @@ public class TicketService {
 
         for (Product product : ticket.getProducts()) {
 
-            totalPriceTicket += product.getPrice();
+            totalPriceTicket += product.getPrice() * product.getQuantity();
         }
 
         ticket.setTotal(totalPriceTicket);

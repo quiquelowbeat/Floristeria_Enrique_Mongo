@@ -48,6 +48,10 @@ public class TreeRepository {
         return true;
     }
 
+    public MongoCollection<Document> getTreesMongo() {
+        return treesMongo;
+    }
+
     public int removeTree(String name, String size, int quantity){
         query = sentQueryToMongo();
         boolean exist = false;
@@ -122,25 +126,25 @@ public class TreeRepository {
         }
         return document;
     }
-     /*
-    public Product findOne (String name){
-        Product product = null;
+
+
+    public Document findOne(String name) {
+        Document queryName = treesMongo.find(new Document("name", name)).first();
+        Document document = null;
         boolean exist = false;
         int i = 0;
 
-        while (!exist && i< database.getTrees().size()) {
-
-            if (name.equalsIgnoreCase(database.getTrees().get(i).getName())) {
-
+        while (!exist && i < query.size()) {
+            if (name.equalsIgnoreCase(query.get(i).getString("name"))) {
                 exist = true;
-                product = database.getTrees().get(i);
-
+                document = query.get(i);
             }
             i++;
         }
-        return product;
+        return document;
+
     }
-    */
+
 }
 
 

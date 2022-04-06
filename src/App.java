@@ -1,3 +1,4 @@
+import com.mongodb.diagnostics.logging.Loggers;
 import database.DBConnection;
 import entities.Decor;
 import entities.Florist;
@@ -12,11 +13,16 @@ import services.TicketService;
 import tools.Keyboard;
 import vista.View;
 
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class App {
 
     public static void main(String[] args) {
 
+        Logger.getLogger(Loggers.PREFIX).setLevel(Level.WARNING); // Oculta los mensajes de logging de MongoDB.
         DBConnection dbConnection = DBConnection.getInstance();
 
         Florist florist = new Florist("Margarita", "C/ Peru 254", "698574526");
@@ -24,7 +30,7 @@ public class App {
         TreeRepository treeRepository = new TreeRepository();
         FlowerRepository flowerRepository = new FlowerRepository();
         DecorRepository decorRepository = new DecorRepository();
-        TicketRepository ticketRepository = new TicketRepository();
+        TicketRepository ticketRepository = new TicketRepository(treeRepository,flowerRepository,decorRepository);
 
         FloristService floristService = new FloristService(treeRepository,flowerRepository,decorRepository,ticketRepository);
         TicketService ticketService = new TicketService(ticketRepository,treeRepository, flowerRepository, decorRepository);
@@ -40,20 +46,11 @@ public class App {
                 choice = Keyboard.readInt("");
             }else{
                 switch (choice){
-                    /*
-                    case 0:
-                        boolean select;
-                        select = Keyboard.leerSiNo("""
-                            SAVE CHANGES IN DATABASE?
-                            (Y/N)""");
-                        if(select){
-                            database.writeDataToFiles();
-                        }
-                        View.closedSoftware();
 
+                    case 0:
+                        View.closedSoftware();
                         break;
 
-                     */
                     case 1:
                         boolean select;
                         Tree tree = treeRepository.createTree(Keyboard.readString("ENTER NAME"),
@@ -117,8 +114,23 @@ public class App {
                         String x;
                         Ticket ticket = ticketRepository.createTicket();
                         do {
-                            View.productAdded(ticketService.addProduct(ticket, Keyboard.readString("ENTER NAME")));
-                            x = Keyboard.readString("1-ADD PRODUCT" + "\n0-EXIT");
+                            x = Keyboard.readString("""
+                                                        1-ADD TREE
+                                                        2-ADD FLOWER
+                                                        3-ADD DECOR
+                                                        0-EXIT
+                                                        """);
+                            switch(x){
+                                case "1":
+                                    View.productAdded(ticketService.addProductTree(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY")));
+                                    break;
+                                case "2":
+                                    View.productAdded(ticketService.addProductFlower(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER COLOR"), Keyboard.readInt("ENTER QUANTITY")));
+                                    break;
+                                case "3":
+                                    View.productAdded(ticketService.addProductDecor(ticket, Keyboard.readString("ENTER NAME"), Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY")));
+                                    break;
+                            }
                         }while (!x.equalsIgnoreCase("0"));
                         if (!ticket.getProducts().isEmpty()){
                             ticketService.total(ticket);
@@ -127,18 +139,15 @@ public class App {
                             View.showMessage("TICKET NOT ADDED, PRODUCT LIST EMPTY");
                         }
                         break;
-                    /*
+
                     case 11:
-                        View.showOldTickets(ticketRepository.getOldSales(LocalDate.of(Keyboard.readInt("Year YYYY"),
-                                                                                        Keyboard.readInt("MONTH MM"),
-                                                                                        Keyboard.readInt("DAY DD"))));
+                        LocalDate date = LocalDate.of(Keyboard.readInt("Year YYYY"), Keyboard.readInt("MONTH MM"), Keyboard.readInt("DAY DD"));
+                        View.showOldTickets(ticketRepository.getOldSales(date));
                         break;
 
                     case 12:
                         View.showTotalSales(ticketService.getTotalSales());
                         break;
-
-                         */
                 }
 
                 System.out.println("--------------------------------------------");

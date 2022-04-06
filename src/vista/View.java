@@ -54,23 +54,20 @@ public class View {
     public static void showInfoTicket(Ticket ticket) {
 
         System.out.println("TICKET NUMBER: " + ticket.getNumTicket() +
-                            "\nDATE: " + ticket.getDate());
+                            "\nDATE: " + ticket.getDate() + "\nPRODUCTS:");
 
         for (Product product : ticket.getProducts()) {
 
-            if (product instanceof Tree) {
+            if (product instanceof Tree tree) {
 
-                Tree tree = (Tree) product;
                 System.out.println(tree.showInfo());
 
-            } else if (product instanceof Flower) {
+            } else if (product instanceof Flower flower) {
 
-                Flower flower = (Flower) product;
                 System.out.println(flower.showInfo());
 
-            } else if (product instanceof Decor) {
+            } else if (product instanceof Decor decor) {
 
-                Decor decor = (Decor) product;
                 System.out.println(decor.showInfo());
             }
         }
@@ -79,8 +76,12 @@ public class View {
     }
 
     public static void showOldTickets(List<Ticket> oldTickets) {
+        if(!oldTickets.isEmpty()){
+            oldTickets.forEach(x -> showInfoTicket(x));
+        } else {
+            System.out.println("NO OLD TICKETS TO SHOW.");
+        }
 
-        oldTickets.forEach(x -> showInfoTicket(x));
 
     }
 

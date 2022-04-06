@@ -1,27 +1,32 @@
 package entities;
 
-import java.io.Serializable;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ticket implements Serializable {
+import static database.DBConnection.db;
 
-    static int numTicketGen = 1;
+public class Ticket {
+
     private int numTicket;
     private LocalDate date;
     private List<Product> products;
     private double total;
+    private MongoCollection<Document> ticketsMongo = db.getCollection("tickets");
+    private List<Document> query = ticketsMongo.find().into(new ArrayList<>());
 
     public Ticket() {
-        numTicket = numTicketGen++;
+        numTicket = (!query.isEmpty()) ? (query.get(query.size() - 1).getInteger("_id") + 1) : 1;
         date = LocalDate.now();
         products = new ArrayList<>();
         total = 0;
     }
 
     public Ticket(LocalDate date) {
-        numTicket = numTicketGen++;
+        numTicket = (!query.isEmpty()) ? (query.get(query.size() - 1).getInteger("_id") + 1) : 1;
         this.date = date;
         products = new ArrayList<>();
         total = 0;
@@ -38,13 +43,40 @@ public class Ticket implements Serializable {
     public List<Product> getProducts() {
         return products;
     }
-
+    public void testProducts(){
+        for(Product p : products){
+            if(p instanceof Tree tree){
+                System.out.println(tree.showInfo());
+            } else if (p instanceof Flower flower){
+                System.out.println(flower.showInfo());
+            } else if (p instanceof Decor decor){
+                System.out.println(decor.showInfo());
+            }
+        }
+    }
     public double getTotal() {
         return total;
     }
 
+    public void setNumTicket(int numTicket) {
+        this.numTicket = numTicket;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public void addTest(){
+        products.add(new Tree("manzano", 34, 2));
+
     }
 
 }
