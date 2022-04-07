@@ -13,6 +13,7 @@ import services.TicketService;
 import tools.Keyboard;
 import vista.View;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +46,7 @@ public class App {
                 View.options();
                 choice = Keyboard.readInt("");
             }else{
-                switch (choice){
+                switch (choice) {
 
                     case 0:
                         View.closedSoftware();
@@ -54,35 +55,39 @@ public class App {
                     case 1:
                         boolean select;
                         Tree tree = treeRepository.createTree(Keyboard.readString("ENTER NAME"),
-                                                                    Keyboard.readDouble("ENTER PRICE"),
-                                                                    Keyboard.readInt("ENTER QUANTITY"));
-                        do{
+                                Keyboard.readDouble("ENTER PRICE"),
+                                Keyboard.readInt("ENTER QUANTITY"));
+                        do {
                             select = tree.setSize(Keyboard.readInt("""
-                                                                        SIZE:\s
-                                                                        1-SMALL
-                                                                        2-MEDIUM
-                                                                        3-BIG"""));
-                            if(!select){View.showMessage("SELECT SIZE 1, 2 OR 3");}
-                        }while (!select);
+                                    SIZE:\s
+                                    1-SMALL
+                                    2-MEDIUM
+                                    3-BIG"""));
+                            if (!select) {
+                                View.showMessage("SELECT SIZE 1, 2 OR 3");
+                            }
+                        } while (!select);
                         View.treeAdded(treeRepository.addTree(tree));
                         break;
 
                     case 2:
                         View.flowerAdded(flowerRepository.addFlower(flowerRepository.createFlower(Keyboard.readString("ENTER NAME"),
-                                                                                                    Keyboard.readString("ENTER COLOR"),
-                                                                                                    Keyboard.readDouble("ENTER PRICE"),
-                                                                                                    Keyboard.readInt("ENTER QUANTITY"))));
+                                Keyboard.readString("ENTER COLOR"),
+                                Keyboard.readDouble("ENTER PRICE"),
+                                Keyboard.readInt("ENTER QUANTITY"))));
                         break;
 
                     case 3:
                         Decor decor = decorRepository.createDecor(Keyboard.readString("ENTER NAME"), Keyboard.readDouble("ENTER PRICE"), Keyboard.readInt("ENTER QUANTITY"));
-                        do{
+                        do {
                             select = decor.setTypeOfMaterialMenu(Keyboard.readInt("""
-                                                                        MATERIAL:\s
-                                                                        1-WOOD
-                                                                        2-PLASTIC"""));
-                            if(!select){View.showMessage("SELECT 1 OR 2");}
-                        }while (!select);
+                                    MATERIAL:\s
+                                    1-WOOD
+                                    2-PLASTIC"""));
+                            if (!select) {
+                                View.showMessage("SELECT 1 OR 2");
+                            }
+                        } while (!select);
                         View.decorAdded(decorRepository.addDecor(decor));
                         break;
                     case 4:
@@ -118,11 +123,11 @@ public class App {
                         Ticket ticket = ticketRepository.createTicket();
                         do {
                             x = Keyboard.readString("""
-                                                        1-ADD TREE
-                                                        2-ADD FLOWER
-                                                        3-ADD DECOR
-                                                        0-EXIT
-                                                        """);
+                                    1-ADD TREE
+                                    2-ADD FLOWER
+                                    3-ADD DECOR
+                                    0-EXIT
+                                    """);
                             switch (x) {
                                 case "1" -> View.productAdded(ticketService.addProductTree(ticket, Keyboard.readString("ENTER NAME"),
                                         Keyboard.readString("ENTER SIZE"), Keyboard.readInt("ENTER QUANTITY")));
@@ -131,19 +136,26 @@ public class App {
                                 case "3" -> View.productAdded(ticketService.addProductDecor(ticket, Keyboard.readString("ENTER NAME"),
                                         Keyboard.readString("ENTER MATERIAL"), Keyboard.readInt("ENTER QUANTITY")));
                             }
-                        }while (!x.equalsIgnoreCase("0"));
-                        if (!ticket.getProducts().isEmpty()){
+                        } while (!x.equalsIgnoreCase("0"));
+                        if (!ticket.getProducts().isEmpty()) {
                             ticketService.total(ticket);
                             View.ticketAdded(ticketRepository.addTicket(ticket));
-                        }else {
+                        } else {
                             View.showMessage("TICKET NOT ADDED, PRODUCT LIST EMPTY.");
                         }
                         break;
 
                     case 11:
-                        LocalDate date = LocalDate.of(Keyboard.readInt("Year YYYY"), Keyboard.readInt("MONTH MM"),
-                                Keyboard.readInt("DAY DD"));
-                        View.showOldTickets(ticketRepository.getOldSales(date));
+                        LocalDate date = null;
+                        try {
+                            date = LocalDate.of(Keyboard.readInt("Year YYYY"), Keyboard.readInt("MONTH MM"),
+                                    Keyboard.readInt("DAY DD"));
+                        } catch (DateTimeException e) {
+                            View.showMessage("WRONG DATE, TRY AGAIN.");
+                        }
+                        if(date != null){
+                            View.showOldTickets(ticketRepository.getOldSales(date));
+                        }
                         break;
 
                     case 12:
