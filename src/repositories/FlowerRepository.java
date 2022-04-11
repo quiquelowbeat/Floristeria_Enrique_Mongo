@@ -56,24 +56,23 @@ public class FlowerRepository {
         query = sentQueryToMongo();
         boolean exist = false;
         int option = 0;
-        int i = 0;
 
-        while(!exist && i < query.size()){
-            if(name.equalsIgnoreCase(query.get(i).getString("name")) &&
-                    color.equalsIgnoreCase(query.get(i).getString("color"))){
-                exist = true;
-                if(query.get(i).getInteger("quantity") >= quantity){
-                    int newQuantity = query.get(i).getInteger("quantity") - quantity;
-                    Document newDocument = new Document("quantity", newQuantity);
-                    Document updateObject = new Document("$set", newDocument);
-                    flowersMongo.updateOne(query.get(i), updateObject);
-                    option = 1;
-                } else if(query.get(i).getInteger("quantity") < quantity){
-                    option = 2;
-                }
+        Document document = findByNameAndColor(name, color);
+
+        try{
+            if(document.getInteger("quantity") >= quantity){
+                int newQuantity = document.getInteger("quantity") - quantity;
+                Document newDocument = new Document("quantity", newQuantity);
+                Document updateObject = new Document("$set", newDocument);
+                flowersMongo.updateOne(document, updateObject);
+                option = 1;
+            } else if(document.getInteger("quantity") < quantity){
+                option = 2;
             }
-            i++;
+        } catch (NullPointerException e) {
+
         }
+
         return option;
     }
     public Document findByNameAndColor(String name, String color){

@@ -56,25 +56,23 @@ public class DecorRepository {
         query = sentQueryToMongo();
         boolean exist = false;
         int option = 0;
-        int i = 0;
 
-        while(!exist && i < query.size()){
+        Document document = findByNameAndMaterial(name, material);
 
-            if(name.equalsIgnoreCase(query.get(i).getString("name")) &&
-                    material.equalsIgnoreCase(query.get(i).getString("material"))){
-                exist = true;
-                if(query.get(i).getInteger("quantity") >= quantity){
-                    int newQuantity = query.get(i).getInteger("quantity") - quantity;
-                    Document newDocument = new Document("quantity", newQuantity);
-                    Document updateObject = new Document("$set", newDocument);
-                    decorMongo.updateOne(query.get(i), updateObject);
-                    option = 1;
-                } else if(query.get(i).getInteger("quantity") < quantity){
-                    option = 2;
-                }
+        try{
+            if(document.getInteger("quantity") >= quantity){
+                int newQuantity = document.getInteger("quantity") - quantity;
+                Document newDocument = new Document("quantity", newQuantity);
+                Document updateObject = new Document("$set", newDocument);
+                decorMongo.updateOne(document, updateObject);
+                option = 1;
+            } else if(document.getInteger("quantity") < quantity){
+                option = 2;
             }
-            i++;
+        } catch (NullPointerException e){
+
         }
+
         return option;
     }
 

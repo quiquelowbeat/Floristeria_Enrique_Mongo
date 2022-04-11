@@ -144,12 +144,10 @@ public class View {
     }
 
     public static void productAdded ( int result){
-        if (result == 0) {
-            System.out.println("PRODUCT NOT FOUND.");
-        } else if(result == 1) {
-            System.out.println("PRODUCT SUCCESSFULLY ADDED.");
-        } else if(result == 2){
-            System.out.println("QUANTITY EXCEEDS THE AVAILABLE STOCK.");
+        switch(result) {
+            case 0 -> System.out.println("PRODUCT NOT FOUND.");
+            case 1 -> System.out.println("PRODUCT SUCCESSFULLY ADDED.");
+            case 2 -> System.out.println("QUANTITY EXCEEDS THE AVAILABLE STOCK.");
         }
     }
 

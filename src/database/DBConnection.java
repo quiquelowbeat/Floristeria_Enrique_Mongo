@@ -10,7 +10,7 @@ public class DBConnection {
     private static final MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
     public static final MongoDatabase db = mongoClient.getDatabase("floristeria_enrique");
 
-    private DBConnection() {}
+    private DBConnection() {} // Patrón Singleton para la conexión a la DB.
 
     public static void getInstance(){
         if(instance == null){

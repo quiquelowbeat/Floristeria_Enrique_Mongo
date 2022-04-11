@@ -56,25 +56,41 @@ public class TreeRepository {
         query = sentQueryToMongo();
         boolean exist = false;
         int option = 0;
+
+        Document document = findByNameAndSize(name, size);
+
+        try{
+            if (document.getInteger("quantity") >= quantity) {
+                int newQuantity = document.getInteger("quantity") - quantity;
+                Document newDocument = new Document("quantity", newQuantity);
+                Document updateObject = new Document("$set", newDocument);
+                treesMongo.updateOne(document, updateObject);
+                option = 1;
+            } else if (document.getInteger("quantity") < quantity) {
+                option = 2;
+            }
+        } catch (NullPointerException e){
+
+        }
+
+        return option;
+    }
+
+    public Document findByNameAndSize(String name, String size) {
+        query = sentQueryToMongo();
+        Document document = null;
+        boolean exist = false;
         int i = 0;
 
         while (!exist && i < query.size()) {
             if (name.equalsIgnoreCase(query.get(i).getString("name")) &&
                     size.equalsIgnoreCase(query.get(i).getString("size"))) {
                 exist = true;
-                if (query.get(i).getInteger("quantity") >= quantity) {
-                    int newQuantity = query.get(i).getInteger("quantity") - quantity;
-                    Document newDocument = new Document("quantity", newQuantity);
-                    Document updateObject = new Document("$set", newDocument);
-                    treesMongo.updateOne(query.get(i), updateObject);
-                    option = 1;
-                } else if (query.get(i).getInteger("quantity") < quantity) {
-                    option = 2;
-                }
+                document = query.get(i);
             }
             i++;
         }
-        return option;
+        return document;
     }
 
     public int getTreeStockQuantity() {
@@ -112,92 +128,4 @@ public class TreeRepository {
         return query.get(i).getDouble("price");
     }
 
-    public Document findByNameAndSize(String name, String size) {
-        query = sentQueryToMongo();
-        Document document = null;
-        boolean exist = false;
-        int i = 0;
-
-        while (!exist && i < query.size()) {
-            if (name.equalsIgnoreCase(query.get(i).getString("name")) &&
-                    size.equalsIgnoreCase(query.get(i).getString("size"))) {
-                exist = true;
-                document = query.get(i);
-            }
-            i++;
-        }
-        return document;
-    }
 }
-/*
-    public Document findOne(String name) {
-        Document queryName = treesMongo.find(new Document("name", name)).first();
-        Document document = null;
-        boolean exist = false;
-        int i = 0;
-
-        while (!exist && i < query.size()) {
-            if (name.equalsIgnoreCase(query.get(i).getString("name"))) {
-                exist = true;
-                document = query.get(i);
-            }
-            i++;
-        }
-        return document;
-
-    }
-*/
-
-
-/*
-    public static void Test() {
-
-        List<Document> listElementsMongo = treesMongo.find().into(new ArrayList<>());
-        for (Document doc : listElementsMongo) {
-            System.out.println(doc.toJson());
-        }
-
-        // De esta manera podemos tirar todos los datos de golpe al crear el Document.
-        // Document treeDB = new Document("name", Keyboard.readString("Insert name:")).append("height", Keyboard.readInt("Insert height:")).append("price", Keyboard.readInt("Price:"));
-        Document treeDB = new Document();
-        treeDB.put("name", Keyboard.readString("Insert name:"));
-        treeDB.put("height", Keyboard.readInt("Insert height:"));
-        treeDB.put("price", Keyboard.readInt("Price:"));
-        Document product = treesMongo.find(new Document("name", "olivo")).first(); // Meter objeto olivo dentro de otro.
-        treeDB.put("products", product);
-        treesMongo.insertOne(treeDB);
-
-        listElementsMongo = treesMongo.find().into(new ArrayList<>());
-        for (Document doc : listElementsMongo) {
-            System.out.println("Name: " + doc.get("name") + " - Height: " + doc.get("height") + " - Price: " + doc.get("price") + "€");
-        }
-        Document query = treesMongo.find(new Document("name", "olivo")).first();
-        System.out.println(query);
-
-        // Buscar usando cursor.
-
-        Document query2 = new Document("height", 3);
-        FindIterable<Document> cursor = treesMongo.find(query2);
-        System.out.println(cursor);
-
-        /*
-
-        Document query = new Document("name", "olivo");
-        MongoCursor<Document> cursor = treesMongo.find(query).cursor();
-        while(cursor.hasNext()){
-            Document doc = cursor.next();
-            System.out.println(doc);
-        }
-
-        MongoCursor<Document> cursor = treesMongo.find().cursor();
-        while(cursor.hasNext()){
-            Document doc = cursor.next();
-            System.out.println(doc);
-        }
-        */
-
-// Consulta
-// Document document = treesMongo.find().first(); // Primer árbol de la lista
-// System.out.println(document.toJson());
-
-
